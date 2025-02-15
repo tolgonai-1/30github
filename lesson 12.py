@@ -1,38 +1,43 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# Задайте ваши учетные данные
-USERNAME = 'your_username'
-PASSWORD = 'your_password'
-URL = 'https://example.com/login'  # Замените на URL вашей страницы входа
+# Учетные данные и URL
+login = "tolgonai.mamytova.ch@gmail.com"
+password = "alisultan3"
+URL = "https://koton-crm.geekstudio.kg/api/auth/v1/signin/"
 
-# Инициализируем драйвер (например, Chrome)
+# Инициализация драйвера
 driver = webdriver.Chrome()
 
 try:
     # Открываем страницу входа
     driver.get(URL)
 
-    # Находим элементы формы для ввода логина и пароля
-    username_input = driver.find_element(By.NAME, 'username')  # Замените на правильное имя поля
-    password_input = driver.find_element(By.NAME, 'password')  # Замените на правильное имя поля
+    # Явное ожидание для поля ввода email
+    email_input = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.NAME, "login"))
+    )
+    email_input.send_keys(login)
 
-    # Вводим учетные данные
-    username_input.send_keys(USERNAME)
-    password_input.send_keys(PASSWORD)
+    # Явное ожидание для поля ввода пароля
+    password_input = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.NAME, "password"))
+    )
+    password_input.send_keys(password)
 
-    # Находим и нажимаем кнопку входа
-    login_button = driver.find_element(By.NAME, 'login')  # Замените на правильное имя кнопки
+    # Явное ожидание для кнопки входа и нажатие на нее
+    login_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '[type="submit"]'))  # Обязательно укажите правильный селектор
+    )
     login_button.click()
 
-    # Ждем немного, чтобы страница загрузилась
-    time.sleep(5)
+    # Дополнительное ожидание для проверки успешной авторизации
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Welcome')]"))  # Замените на правильный текст
+    )
 
-    # Проверяем, произошел ли вход (например, ищем элемент, который отображается только после успешного входа)
-    # Это может быть заголовок, приветствие пользователя или какой-то элемент на главной странице
-    assert "Welcome" in driver.page_source
     print("Авторизация прошла успешно!")
 
 except Exception as e:
