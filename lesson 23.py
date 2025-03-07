@@ -67,6 +67,11 @@ print(geometric_mean)
 print(harmonic_mean)
 print(quadratic_mean)
 
+##Тригонометрическое выражение:
+from math import pi,sin,cos,tan,radians
+x = radians(float(input()))
+y = sin(x) + cos(x) + tan(x)**2
+print(y)
 
 
 
